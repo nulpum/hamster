@@ -20,9 +20,8 @@ body{
 }
 #wrap svg{
   position:absolute;top:0;left:0;
-  opacity:0;overflow:visible;
+  overflow:visible;
 }
-#wrap svg.show{opacity:1;}
 #info{text-align:center}
 #tdisp{
   font-size:2rem;font-weight:bold;
@@ -284,28 +283,31 @@ const DIM=[
 let frameTimer = null;
 let frameIdx   = 0;
 
+const ABS = 'position:absolute;top:0;left:0;';
 function startFrameToggle(spdSec){
   clearInterval(frameTimer);
   frameIdx = 0;
-  const svgs = wrap ? wrap.querySelectorAll('svg') : [];
-  if(svgs[0]) svgs[0].classList.add('show');
-  if(svgs[1]) svgs[1].classList.remove('show');
-  frameTimer = setInterval(()=>{
+  const c = wrap ? wrap.children : [];
+  if(c[0]) c[0].setAttribute('style', ABS+'opacity:1');
+  if(c[1]) c[1].setAttribute('style', ABS+'opacity:0');
+frameTimer = setInterval(()=>{
     frameIdx = 1 - frameIdx;
-    const s = wrap.querySelectorAll('svg');
-    if(s[0]) s[0].classList.toggle('show', frameIdx===0);
-    if(s[1]) s[1].classList.toggle('show', frameIdx===1);
+    const ch = wrap.children;
+    if(ch[0]) ch[0].setAttribute('style', ABS+'opacity:'+(frameIdx===0?1:0));
+    if(ch[1]) ch[1].setAttribute('style', ABS+'opacity:'+(frameIdx===1?1:0));
   }, spdSec * 1000 / 2);
 }
 
 // ─── STATE ───────────────────────────────────────────────
-const savedF  = parseFloat(localStorage.getItem('h_f')||'0');
-const savedT  = parseFloat(localStorage.getItem('h_t')||String(Date.now()));
-const offSec  = Math.max(0, (Date.now()-savedT)/1000);
-let fatigue   = Math.max(0, savedF - offSec*0.5);
-// Save immediately so double-recovery doesn't occur on quick refresh
-localStorage.setItem('h_f', String(fatigue));
-localStorage.setItem('h_t', String(Date.now()));
+let fatigue = 0;
+try {
+  const savedF = parseFloat(localStorage.getItem('h_f')||'0');
+  const savedT = parseFloat(localStorage.getItem('h_t')||String(Date.now()));
+  const offSec = Math.max(0, (Date.now()-savedT)/1000);
+  fatigue = Math.max(0, savedF - offSec*0.5);
+  localStorage.setItem('h_f', String(fatigue));
+  localStorage.setItem('h_t', String(Date.now()));
+} catch(e){}
 
 const sessionStart = Date.now();
 let lastTick       = Date.now();
