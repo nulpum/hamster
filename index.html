@@ -14,17 +14,15 @@ body{
   font-family:'Courier New',monospace;
 }
 #wrap{
-  display:grid;
+  position:relative;
+  width:220px;height:300px;
+  flex-shrink:0;
 }
 #wrap svg{
-  grid-area:1/1;
+  position:absolute;top:0;left:0;
   opacity:0;overflow:visible;
 }
-#wrap svg.fa{opacity:1}
-#wrap.go svg.fa{animation:pkA var(--spd) steps(1) infinite}
-#wrap.go svg.fb{animation:pkB var(--spd) steps(1) infinite}
-@keyframes pkA{0%,49%{opacity:1}50%,100%{opacity:0}}
-@keyframes pkB{0%,49%{opacity:0}50%,100%{opacity:1}}
+#wrap svg.show{opacity:1;}
 #info{text-align:center}
 #tdisp{
   font-size:2rem;font-weight:bold;
@@ -282,6 +280,24 @@ const DIM=[
   {w:200,h:300},
 ];
 
+// ─── FRAME TOGGLE ────────────────────────────────────────
+let frameTimer = null;
+let frameIdx   = 0;
+
+function startFrameToggle(spdSec){
+  clearInterval(frameTimer);
+  frameIdx = 0;
+  const svgs = wrap ? wrap.querySelectorAll('svg') : [];
+  if(svgs[0]) svgs[0].classList.add('show');
+  if(svgs[1]) svgs[1].classList.remove('show');
+  frameTimer = setInterval(()=>{
+    frameIdx = 1 - frameIdx;
+    const s = wrap.querySelectorAll('svg');
+    if(s[0]) s[0].classList.toggle('show', frameIdx===0);
+    if(s[1]) s[1].classList.toggle('show', frameIdx===1);
+  }, spdSec * 1000 / 2);
+}
+
 // ─── STATE ───────────────────────────────────────────────
 const savedF  = parseFloat(localStorage.getItem('h_f')||'0');
 const savedT  = parseFloat(localStorage.getItem('h_t')||String(Date.now()));
@@ -310,12 +326,8 @@ function render(si){
   const [fa,fb]=FRAMES[si];
   wrap.style.width  = d.w+'px';
   wrap.style.height = d.h+'px';
-  wrap.style.setProperty('--spd', ST[si].spd);
-  wrap.innerHTML = fa.replace('<svg','<svg class="fa"')+
-                   fb.replace('<svg','<svg class="fb"');
-  wrap.classList.remove('go');
-  void wrap.offsetWidth;
-  wrap.classList.add('go');
+  wrap.innerHTML = fa + fb;
+  startFrameToggle(parseFloat(ST[si].spd));
   sname.textContent = ST[si].n;
 }
 
