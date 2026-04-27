@@ -14,11 +14,10 @@ body{
   font-family:'Courier New',monospace;
 }
 #wrap{
-  position:relative;
-  overflow:visible;
+  display:grid;
 }
 #wrap svg{
-  position:absolute;top:0;left:0;
+  grid-area:1/1;
   opacity:0;overflow:visible;
 }
 #wrap svg.fa{opacity:1}
@@ -335,11 +334,8 @@ function tick(){
 
   const sessionAge=(now-sessionStart)/1000;
 
-  // Fatigue frozen during the 30-min startup sleep
-  if(sessionAge>=1800){
-    if(isVisible) fatigue=Math.min(MAX_SEC, fatigue+dt);
-    else          fatigue=Math.max(0, fatigue-dt*0.5);
-  }
+  if(isVisible) fatigue=Math.min(MAX_SEC, fatigue+dt);
+  else          fatigue=Math.max(0, fatigue-dt*0.5);
 
   const displayStage = sessionAge<1800 ? 0 : getStage(fatigue);
   render(displayStage);
