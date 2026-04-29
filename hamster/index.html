@@ -235,6 +235,9 @@ const sessionStart = Date.now();
     fatigue = savedI
       ? Math.max(0, savedF - offSec)
       : Math.min(MAX_SEC, savedF + offSec);
+    // タイマーを引き継ぎ（アイドル中は加算しない）
+    const savedV = parseFloat(localStorage.getItem('sessionVisible') || '0');
+    sessionVisible = savedI ? savedV : savedV + offSec;
     isIdle = savedI;
     if(savedI) lastActivity = now - IDLE_SEC * 1000; // 既にアイドル扱い
   }catch(e){}
@@ -294,9 +297,10 @@ function tick(){
   saveTick++;
   if(saveTick % 10 === 0){
     try{
-      localStorage.setItem('fatigue',       String(fatigue));
+      localStorage.setItem('fatigue',        String(fatigue));
       localStorage.setItem('lastTimestamp', String(now));
       localStorage.setItem('isIdle',        String(isIdle));
+      localStorage.setItem('sessionVisible',String(sessionVisible));
     }catch(e){}
   }
 }
