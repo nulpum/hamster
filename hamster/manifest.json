@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "過労ハムスター",
+  "version": "1.0.0",
+  "description": "働きすぎを教えてくれるジャンガリアンハムスター",
+  "permissions": ["idle", "storage", "alarms"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_title": "過労ハムスター"
+  }
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>過労ハムスター</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  width:240px;
+  background:#1e1e2e;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:20px 0 16px;
+  font-family:'Courier New',monospace;
+}
+#container{
+  position:relative;
+  display:flex;flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+}
+#wrap{
+  position:relative;
+  width:220px;height:300px;
+  flex-shrink:0;
+}
+#wrap svg{
+  position:absolute;top:0;left:0;
+  overflow:visible;
+}
+#info-panel{
+  margin-top:12px;
+  text-align:center;
+  padding:10px 0 4px;
+}
+#tdisp{
+  font-size:1.7rem;font-weight:bold;
+  color:rgba(255,255,255,.88);
+  letter-spacing:.06em;margin-bottom:5px;
+}
+#recovery{
+  font-size:.72rem;
+  color:rgba(255,255,255,.48);
+  letter-spacing:.02em;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="info-panel">
+    <div id="tdisp">00:00:00</div>
+    <div id="recovery">－</div>
+  </div>
+  <div id="wrap"></div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
