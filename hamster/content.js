@@ -189,10 +189,12 @@
     if(!hasMoved) panel.classList.toggle('open');
   });
 
-  // ─── IDLE STATE（backgroundのstorageを監視） ──────────
+  // ─── 他タブのストレージ変更を監視してリアルタイム同期 ──
   try{
     chrome.storage.onChanged.addListener((changes)=>{
-      if(changes.isIdle) isActive = !changes.isIdle.newValue;
+      if(changes.isIdle)         isActive       = !changes.isIdle.newValue;
+      if(changes.fatigue)        fatigue        = parseFloat(changes.fatigue.newValue)        || 0;
+      if(changes.sessionVisible) sessionVisible = parseFloat(changes.sessionVisible.newValue) || 0;
     });
   }catch(e){}
 
@@ -214,6 +216,7 @@
       sessionVisible = wasIdle ? savedV : savedV+offSec;
       isActive = !wasIdle;
       lastTick=Date.now();
+      tick(); // ストレージ読み込み後すぐステージを反映
     });
   }catch(e){}
 
