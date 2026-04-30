@@ -159,7 +159,7 @@
       : `完全回復まで ${fmt(Math.ceil(fatigue))}`;
     saveTick++;
     if(saveTick%10===0){
-      try{ chrome.storage.local.set({fatigue, lastTimestamp:Date.now(), isIdle:!isActive}); }catch(e){}
+      try{ chrome.storage.local.set({fatigue, lastTimestamp:Date.now(), isIdle:!isActive, sessionVisible}); }catch(e){}
     }
   }
 
@@ -202,7 +202,7 @@
   setInterval(tick,1000);
 
   try{
-    chrome.storage.local.get(['fatigue','lastTimestamp','isIdle'], d=>{
+    chrome.storage.local.get(['fatigue','lastTimestamp','isIdle','sessionVisible'], d=>{
       if(chrome.runtime.lastError) return;
       const now=Date.now();
       const savedF=parseFloat(d.fatigue||0);
@@ -210,6 +210,8 @@
       const wasIdle=d.isIdle??false;
       const offSec=Math.max(0,(now-savedT)/1000);
       fatigue = wasIdle ? Math.max(0,savedF-offSec) : Math.min(MAX_SEC,savedF+offSec);
+      const savedV=parseFloat(d.sessionVisible||0);
+      sessionVisible = wasIdle ? savedV : savedV+offSec;
       isActive = !wasIdle;
       lastTick=Date.now();
     });
