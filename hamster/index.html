@@ -223,7 +223,6 @@ let lastActivity  = Date.now();
 let lastTick      = Date.now();
 let curStage      = -1;
 let saveTick      = 0;
-const sessionStart = Date.now();
 
 // ─── localStorage 読み込み ───────────────────────────────
 (function loadStorage(){
@@ -286,9 +285,7 @@ function tick(){
     fatigue = Math.max(0, fatigue - dt);
   }
 
-  // 起動直後30分は眠りステージ固定
-  const sessionAge = (now - sessionStart) / 1000;
-  render(sessionAge < ST[0].lim ? 0 : getStage(fatigue));
+  render(getStage(fatigue));
 
   tdisp.textContent = fmt(sessionVisible);
   recovery.textContent = fatigue <= 0
