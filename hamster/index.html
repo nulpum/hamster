@@ -49,7 +49,94 @@ body{
   color:rgba(255,255,255,.88);
   letter-spacing:.06em;margin-bottom:5px;
 }
-#recovery{font-size:.72rem;color:rgba(255,255,255,.48);letter-spacing:.02em}
+#recovery{font-size:.72rem;color:rgba(255,255,255,.48);letter-spacing:.02em;margin-bottom:12px}
+
+/* ─── パネル下部ボタン行 ────────────────────────────── */
+#panel-footer{
+  display:flex;align-items:center;justify-content:center;
+  gap:8px;padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.share-btn{
+  display:flex;align-items:center;gap:5px;
+  background:none;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:8px;
+  color:rgba(255,255,255,.72);
+  font-family:'Courier New',monospace;
+  font-size:.72rem;
+  padding:5px 12px;
+  cursor:pointer;
+  transition:all .18s;
+  white-space:nowrap;
+}
+.share-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.share-btn.x-btn:hover{border-color:#1d9bf0;color:#1d9bf0}
+.share-btn.line-btn:hover{border-color:#06c755;color:#06c755}
+#help-btn{
+  margin-left:auto;
+  background:none;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:50%;
+  width:26px;height:26px;
+  color:rgba(255,255,255,.38);
+  font-size:.72rem;
+  cursor:pointer;
+  transition:all .18s;
+  flex-shrink:0;
+}
+#help-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8)}
+
+/* ─── 仕様説明モーダル ──────────────────────────────── */
+#help-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:99998;
+  display:flex;align-items:center;justify-content:center;
+}
+#help-overlay.hidden{display:none}
+#help-box{
+  background:#16162a;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px;
+  padding:28px 28px 22px;
+  width:min(360px,90vw);
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+  font-family:'Courier New',monospace;
+  color:rgba(255,255,255,.82);
+}
+#help-box h2{
+  font-size:1rem;font-weight:bold;
+  letter-spacing:.06em;
+  margin-bottom:16px;
+  color:#fff;
+}
+#help-box h3{
+  font-size:.7rem;letter-spacing:.12em;
+  color:rgba(255,255,255,.38);
+  text-transform:uppercase;
+  margin:14px 0 8px;
+}
+#help-box p,#help-box li{font-size:.78rem;line-height:1.7;color:rgba(255,255,255,.65)}
+#help-box ul{list-style:none;padding:0}
+#help-box li::before{content:'・'}
+.stage-table{width:100%;border-collapse:collapse;margin-top:4px}
+.stage-table td{font-size:.75rem;padding:3px 6px;color:rgba(255,255,255,.62)}
+.stage-table td:first-child{color:rgba(255,255,255,.85);width:7em}
+.stage-table tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+#help-close{
+  display:block;margin:18px auto 0;
+  background:none;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:8px;
+  color:rgba(255,255,255,.6);
+  font-family:'Courier New',monospace;
+  font-size:.8rem;
+  padding:8px 28px;
+  cursor:pointer;
+  transition:all .2s;
+}
+#help-close:hover{background:rgba(255,255,255,.08);color:#fff}
 
 /* ─── 広告モーダル ─────────────────────────────────── */
 #ad-overlay{
@@ -107,6 +194,39 @@ body{
 </head>
 <body>
 
+<!-- ─── 仕様説明モーダル ─────────────────────────────────── -->
+<div id="help-overlay" class="hidden">
+  <div id="help-box">
+    <h2>🐹 過労ハムスターとは</h2>
+    <p>あなたの作業時間をハムスターの疲労度で可視化するツールです。<br>ブラウザを開いている間、ハムスターがあなたと一緒に働きます。</p>
+
+    <h3>操作方法</h3>
+    <ul>
+      <li>ハムスターをクリック → タイマー・回復時間を表示</li>
+      <li>ドラッグ → 画面上の好きな場所に移動</li>
+    </ul>
+
+    <h3>疲労ステージ</h3>
+    <table class="stage-table">
+      <tr><td>😴 眠り</td><td>0〜30分（起床・休憩直後）</td></tr>
+      <tr><td>😊 元気</td><td>30分〜1時間30分</td></tr>
+      <tr><td>🌟 ハイテンション</td><td>1:30〜3時間</td></tr>
+      <tr><td>😓 しんどい</td><td>3〜5時間</td></tr>
+      <tr><td>💀 バキバキ</td><td>5〜8時間</td></tr>
+      <tr><td>✦ 昇天</td><td>8時間超（限界突破）</td></tr>
+    </table>
+
+    <h3>回復の仕組み</h3>
+    <ul>
+      <li>30分操作なし → 自動で回復モードに入る</li>
+      <li>最大8時間で完全回復</li>
+      <li>疲労・タイマーはブラウザを閉じても記憶される</li>
+    </ul>
+
+    <button id="help-close">閉じる</button>
+  </div>
+</div>
+
 <!-- ─── 広告モーダル ────────────────────────────────────── -->
 <div id="ad-overlay" class="hidden">
   <div id="ad-box">
@@ -134,6 +254,11 @@ body{
     <div id="info-panel">
       <div id="tdisp">00:00:00</div>
       <div id="recovery">－</div>
+      <div id="panel-footer">
+        <button class="share-btn x-btn" id="share-x">𝕏 シェア</button>
+        <button class="share-btn line-btn" id="share-line">LINE</button>
+        <button id="help-btn">？</button>
+      </div>
     </div>
     <div id="wrap"></div>
   </div>
@@ -306,6 +431,37 @@ function tick(){
 
 tick();
 setInterval(tick, 1000);
+
+// ─── SNSシェア ───────────────────────────────────────────
+const SITE_URL  = 'https://nulpum.github.io/hamster/hamster/';
+const SITE_NAME = '過労ハムスター';
+
+document.getElementById('share-x').addEventListener('click', e=>{
+  e.stopPropagation();
+  const stage = ['😴眠り','😊元気','🌟ハイテンション','😓しんどい','💀バキバキ','✦昇天'][curStage] || '';
+  const text = `今日の疲労度：${stage}（${fmt(Math.round(sessionVisible))}）\n働きすぎを教えてくれる${SITE_NAME} 🐹`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(SITE_URL)}`, '_blank');
+});
+
+document.getElementById('share-line').addEventListener('click', e=>{
+  e.stopPropagation();
+  const stage = ['😴眠り','😊元気','🌟ハイテンション','😓しんどい','💀バキバキ','✦昇天'][curStage] || '';
+  const text = `今日の疲労度：${stage}（${fmt(Math.round(sessionVisible))}）\n${SITE_NAME} 🐹\n${SITE_URL}`;
+  window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank');
+});
+
+// ─── 仕様説明モーダル ────────────────────────────────────
+const helpOverlay = document.getElementById('help-overlay');
+document.getElementById('help-btn').addEventListener('click', e=>{
+  e.stopPropagation();
+  helpOverlay.classList.remove('hidden');
+});
+document.getElementById('help-close').addEventListener('click', ()=>{
+  helpOverlay.classList.add('hidden');
+});
+helpOverlay.addEventListener('click', e=>{
+  if(e.target === helpOverlay) helpOverlay.classList.add('hidden');
+});
 
 // ─── 広告モーダル（1日1回） ──────────────────────────────
 (function initAd(){
