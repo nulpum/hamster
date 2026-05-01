@@ -198,26 +198,23 @@
     });
   }catch(e){}
 
-  // ─── INIT ─────────────────────────────────────────────
-  lastTick=Date.now();
-  tick();
-  setInterval(tick,1000);
-
+  // ─── INIT（ストレージ読み込み後に初回描画） ──────────────
   try{
     chrome.storage.local.get(['fatigue','lastTimestamp','isIdle','sessionVisible'], d=>{
-      if(chrome.runtime.lastError) return;
+      if(chrome.runtime.lastError){ lastTick=Date.now(); tick(); setInterval(tick,1000); return; }
       const now=Date.now();
       const savedF=parseFloat(d.fatigue||0);
       const savedT=parseFloat(d.lastTimestamp||now);
       const wasIdle=d.isIdle??false;
       const offSec=Math.max(0,(now-savedT)/1000);
-      fatigue = wasIdle ? Math.max(0,savedF-offSec) : Math.min(MAX_SEC,savedF+offSec);
-      const savedV=parseFloat(d.sessionVisible||0);
+      fatigue        = wasIdle ? Math.max(0,savedF-offSec) : Math.min(MAX_SEC,savedF+offSec);
+      const savedV   = parseFloat(d.sessionVisible||0);
       sessionVisible = wasIdle ? savedV : savedV+offSec;
-      isActive = !wasIdle;
+      isActive       = !wasIdle;
       lastTick=Date.now();
-      tick(); // ストレージ読み込み後すぐステージを反映
+      tick(); // 正しい疲労値で初回描画
+      setInterval(tick,1000);
     });
-  }catch(e){}
+  }catch(e){ lastTick=Date.now(); tick(); setInterval(tick,1000); }
 
 })();
