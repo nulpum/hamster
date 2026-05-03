@@ -46,12 +46,14 @@
   color:rgba(255,255,255,.88);
   letter-spacing:.06em;margin-bottom:5px;
 }
-#recovery{font-size:.72rem;color:rgba(255,255,255,.48);letter-spacing:.02em}
+#recovery{font-size:.72rem;color:rgba(255,255,255,.48);letter-spacing:.02em;margin-bottom:4px}
+#yesterday{font-size:.65rem;color:rgba(255,255,255,.28);letter-spacing:.02em;min-height:.9em;margin-bottom:6px}
 </style>
 <div id="container">
   <div id="info-panel">
     <div id="tdisp">00:00:00</div>
     <div id="recovery">－</div>
+    <div id="yesterday"></div>
   </div>
   <div id="wrap"></div>
 </div>`;
@@ -62,6 +64,7 @@
   const wrap      = $('wrap');
   const tdisp     = $('tdisp');
   const recovery  = $('recovery');
+  const yesterday = $('yesterday');
 
   // ─── STAGE CONFIG ─────────────────────────────────────
   const ST=[
@@ -200,19 +203,32 @@
 
   // ─── INIT（ストレージ読み込み後に初回描画） ──────────────
   try{
-    chrome.storage.local.get(['fatigue','lastTimestamp','isIdle','sessionVisible'], d=>{
+    chrome.storage.local.get(['fatigue','lastTimestamp','isIdle','sessionVisible','workDate','yesterdayVisible'], d=>{
       if(chrome.runtime.lastError){ lastTick=Date.now(); tick(); setInterval(tick,1000); return; }
       const now=Date.now();
+      const today=new Date().toISOString().slice(0,10);
+
+      // 日付が変わっていたらタイマーリセット・前日分を保存
+      let savedV=parseFloat(d.sessionVisible||0);
+      if(d.workDate && d.workDate!==today){
+        chrome.storage.local.set({yesterdayVisible:savedV, sessionVisible:0, workDate:today});
+        if(d.sessionVisible>0) yesterday.textContent=`昨日 ${fmt(Math.round(savedV))}`;
+        savedV=0;
+      } else {
+        chrome.storage.local.set({workDate:today});
+        const yv=parseFloat(d.yesterdayVisible||0);
+        if(yv>0) yesterday.textContent=`昨日 ${fmt(Math.round(yv))}`;
+      }
+
       const savedF=parseFloat(d.fatigue||0);
       const savedT=parseFloat(d.lastTimestamp||now);
       const wasIdle=d.isIdle??false;
       const offSec=Math.max(0,(now-savedT)/1000);
       fatigue        = wasIdle ? Math.max(0,savedF-offSec) : Math.min(MAX_SEC,savedF+offSec);
-      const savedV   = parseFloat(d.sessionVisible||0);
       sessionVisible = wasIdle ? savedV : savedV+offSec;
       isActive       = !wasIdle;
       lastTick=Date.now();
-      tick(); // 正しい疲労値で初回描画
+      tick();
       setInterval(tick,1000);
     });
   }catch(e){ lastTick=Date.now(); tick(); setInterval(tick,1000); }

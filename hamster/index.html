@@ -55,7 +55,8 @@ body{
   color:rgba(255,255,255,.88);
   letter-spacing:.06em;margin-bottom:5px;
 }
-#recovery{font-size:.72rem;color:rgba(255,255,255,.48);letter-spacing:.02em;margin-bottom:12px}
+#recovery{font-size:.72rem;color:rgba(255,255,255,.48);letter-spacing:.02em;margin-bottom:6px}
+#yesterday{font-size:.65rem;color:rgba(255,255,255,.28);letter-spacing:.02em;margin-bottom:10px;min-height:.9em}
 
 /* ─── パネル下部ボタン行 ────────────────────────────── */
 #panel-footer{
@@ -260,6 +261,7 @@ body{
     <div id="info-panel">
       <div id="tdisp">00:00:00</div>
       <div id="recovery">－</div>
+      <div id="yesterday"></div>
       <div id="panel-footer">
         <button class="share-btn x-btn" id="share-x">𝕏 シェア</button>
         <button class="share-btn line-btn" id="share-line">LINE</button>
@@ -329,6 +331,8 @@ const panel     = document.getElementById('info-panel');
 const wrap      = document.getElementById('wrap');
 const tdisp     = document.getElementById('tdisp');
 const recovery  = document.getElementById('recovery');
+const yesterday = document.getElementById('yesterday');
+
 
 // ─── FRAME TOGGLE ────────────────────────────────────────
 let frameTimer=null, frameIdx=0;
@@ -358,20 +362,29 @@ let saveTick      = 0;
 // ─── localStorage 読み込み ───────────────────────────────
 (function loadStorage(){
   try{
+    const today  = new Date().toISOString().slice(0,10); // "YYYY-MM-DD"
+    const stored = localStorage.getItem('workDate');
+
+    // 日付が変わっていたら前日の記録を保存してタイマーリセット
+    if(stored && stored !== today){
+      const prevV = localStorage.getItem('sessionVisible') || '0';
+      localStorage.setItem('yesterdayVisible', prevV);
+      localStorage.setItem('sessionVisible', '0');
+    }
+    localStorage.setItem('workDate', today);
+
     const savedF = parseFloat(localStorage.getItem('fatigue') || '0');
     const savedT = parseFloat(localStorage.getItem('lastTimestamp') || String(Date.now()));
     const savedI = localStorage.getItem('isIdle') === 'true';
     const now    = Date.now();
     const offSec = Math.max(0, (now - savedT) / 1000);
-    // ページを閉じていた間の疲労/回復を反映
     fatigue = savedI
       ? Math.max(0, savedF - offSec)
       : Math.min(MAX_SEC, savedF + offSec);
-    // タイマーを引き継ぎ（アイドル中は加算しない）
     const savedV = parseFloat(localStorage.getItem('sessionVisible') || '0');
     sessionVisible = savedI ? savedV : savedV + offSec;
     isIdle = savedI;
-    if(savedI) lastActivity = now - IDLE_SEC * 1000; // 既にアイドル扱い
+    if(savedI) lastActivity = now - IDLE_SEC * 1000;
   }catch(e){}
 })();
 
@@ -397,6 +410,12 @@ function fmt(s){
   const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=Math.floor(s%60);
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
 }
+
+// 前日の稼働時間を表示（fmt定義後に実行）
+try{
+  const yv = parseFloat(localStorage.getItem('yesterdayVisible')||'0');
+  if(yv > 0) yesterday.textContent = `昨日 ${fmt(Math.round(yv))}`;
+}catch(e){}
 
 // ─── TICK ────────────────────────────────────────────────
 function tick(){
