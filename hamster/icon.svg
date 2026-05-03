@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 背景 -->
+  <rect width="512" height="512" rx="112" fill="#1e1e2e"/>
+  <!-- 耳 -->
+  <ellipse cx="170" cy="148" rx="38" ry="46" fill="#b0a8a0" transform="rotate(-12 170 148)"/>
+  <ellipse cx="170" cy="148" rx="22" ry="28" fill="#f0a8b0" opacity=".75" transform="rotate(-12 170 148)"/>
+  <ellipse cx="342" cy="148" rx="38" ry="46" fill="#b0a8a0" transform="rotate(12 342 148)"/>
+  <ellipse cx="342" cy="148" rx="22" ry="28" fill="#f0a8b0" opacity=".75" transform="rotate(12 342 148)"/>
+  <!-- 頭 -->
+  <ellipse cx="256" cy="215" rx="120" ry="108" fill="#a8a09a"/>
+  <!-- 頬白 -->
+  <ellipse cx="256" cy="230" rx="88" ry="76" fill="#f0ede8"/>
+  <!-- 閉じた目 -->
+  <path d="M208 200 Q222 191 236 200" stroke="#2a2820" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M276 200 Q290 191 304 200" stroke="#2a2820" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- 鼻 -->
+  <path d="M244 228 Q256 221 268 228 Q265 237 256 239 Q247 237 244 228" fill="#e88898"/>
+  <!-- 胴体 -->
+  <ellipse cx="256" cy="360" rx="130" ry="95" fill="#a8a09a"/>
+  <ellipse cx="256" cy="350" rx="92" ry="70" fill="#f0ede8"/>
+  <!-- しっぽ -->
+  <path d="M378 340 Q402 332 400 316 Q398 304 386 308 Q374 314 378 340" fill="#c8c0b8"/>
+  <!-- ZZZ -->
+  <text x="298" y="168" font-size="44" fill="rgba(255,255,255,.55)" font-family="sans-serif" font-weight="bold">z</text>
+  <text x="335" y="130" font-size="34" fill="rgba(255,255,255,.42)" font-family="sans-serif" font-weight="bold">z</text>
+  <text x="364" y="100" font-size="26" fill="rgba(255,255,255,.32)" font-family="sans-serif" font-weight="bold">z</text>
+</svg>

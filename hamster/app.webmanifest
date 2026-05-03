@@ -1,0 +1,24 @@
+{
+  "name": "過労ハムスター",
+  "short_name": "過労ハム",
+  "description": "働きすぎを教えてくれるジャンガリアンハムスター",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1e1e2e",
+  "theme_color": "#1e1e2e",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
