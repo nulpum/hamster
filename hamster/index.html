@@ -364,12 +364,20 @@ let saveTick      = 0;
   try{
     const today  = new Date().toISOString().slice(0,10); // "YYYY-MM-DD"
     const stored = localStorage.getItem('workDate');
+    const isNewDay = stored && stored !== today;
 
-    // 日付が変わっていたら前日の記録を保存してタイマーリセット
-    if(stored && stored !== today){
-      const prevV = localStorage.getItem('sessionVisible') || '0';
-      localStorage.setItem('yesterdayVisible', prevV);
+    if(isNewDay){
+      // 日付が変わったら前日の記録を保存してリセット
+      const prevV = parseFloat(localStorage.getItem('sessionVisible') || '0');
+      localStorage.setItem('yesterdayVisible', String(prevV));
       localStorage.setItem('sessionVisible', '0');
+      localStorage.setItem('fatigue', '0');
+      localStorage.setItem('workDate', today);
+      // 状態を初期化（offSec加算しない）
+      fatigue = 0;
+      sessionVisible = 0;
+      isIdle = false;
+      return;
     }
     localStorage.setItem('workDate', today);
 

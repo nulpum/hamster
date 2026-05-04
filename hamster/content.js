@@ -209,16 +209,18 @@
       const today=new Date().toISOString().slice(0,10);
 
       // 日付が変わっていたらタイマーリセット・前日分を保存
-      let savedV=parseFloat(d.sessionVisible||0);
+      const savedV=parseFloat(d.sessionVisible||0);
       if(d.workDate && d.workDate!==today){
-        chrome.storage.local.set({yesterdayVisible:savedV, sessionVisible:0, workDate:today});
-        if(d.sessionVisible>0) yesterday.textContent=`昨日 ${fmt(Math.round(savedV))}`;
-        savedV=0;
-      } else {
-        chrome.storage.local.set({workDate:today});
-        const yv=parseFloat(d.yesterdayVisible||0);
-        if(yv>0) yesterday.textContent=`昨日 ${fmt(Math.round(yv))}`;
+        chrome.storage.local.set({yesterdayVisible:savedV, sessionVisible:0, fatigue:0, workDate:today});
+        if(savedV>0) yesterday.textContent=`昨日 ${fmt(Math.round(savedV))}`;
+        // 新しい日は0からスタート（offSec加算しない）
+        fatigue=0; sessionVisible=0; isActive=true;
+        lastTick=Date.now(); tick(); setInterval(tick,1000);
+        return;
       }
+      chrome.storage.local.set({workDate:today});
+      const yv=parseFloat(d.yesterdayVisible||0);
+      if(yv>0) yesterday.textContent=`昨日 ${fmt(Math.round(yv))}`;
 
       const savedF=parseFloat(d.fatigue||0);
       const savedT=parseFloat(d.lastTimestamp||now);
