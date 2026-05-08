@@ -387,13 +387,15 @@ let saveTick      = 0;
     const savedI = localStorage.getItem('isIdle') === 'true';
     const now    = Date.now();
     const offSec = Math.max(0, (now - savedT) / 1000);
-    fatigue = savedI
+    // 30分以上離席（スリープ含む）はアイドル扱い
+    const effectivelyIdle = savedI || (offSec >= IDLE_SEC);
+    fatigue = effectivelyIdle
       ? Math.max(0, savedF - offSec)
       : Math.min(MAX_SEC, savedF + offSec);
     const savedV = parseFloat(localStorage.getItem('sessionVisible') || '0');
-    sessionVisible = savedI ? savedV : savedV + offSec;
-    isIdle = savedI;
-    if(savedI) lastActivity = now - IDLE_SEC * 1000;
+    sessionVisible = effectivelyIdle ? savedV : savedV + offSec;
+    isIdle = effectivelyIdle;
+    if(effectivelyIdle) lastActivity = now - IDLE_SEC * 1000;
   }catch(e){}
 })();
 
@@ -429,7 +431,7 @@ try{
 // ─── TICK ────────────────────────────────────────────────
 function tick(){
   const now = Date.now();
-  const dt  = (now - lastTick) / 1000;
+  const dt  = Math.min((now - lastTick) / 1000, 60); // スリープ復帰で巨大dtを防ぐ
   lastTick  = now;
 
   // 30分無操作でアイドルへ
