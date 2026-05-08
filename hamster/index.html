@@ -428,9 +428,27 @@ try{
   if(yv > 0) yesterday.textContent = `昨日 ${fmt(Math.round(yv))}`;
 }catch(e){}
 
+// ─── 日付変更チェック ────────────────────────────────────
+let currentDate = new Date().toISOString().slice(0,10);
+function checkDateChange(){
+  const today = new Date().toISOString().slice(0,10);
+  if(today !== currentDate){
+    currentDate = today;
+    try{
+      localStorage.setItem('yesterdayVisible', String(sessionVisible));
+      if(sessionVisible > 0) yesterday.textContent = `昨日 ${fmt(Math.round(sessionVisible))}`;
+      localStorage.setItem('sessionVisible','0');
+      localStorage.setItem('fatigue','0');
+      localStorage.setItem('workDate', today);
+    }catch(e){}
+    sessionVisible = 0; fatigue = 0; isIdle = false;
+  }
+}
+
 // ─── TICK ────────────────────────────────────────────────
 function tick(){
   const now = Date.now();
+  checkDateChange();
   const dt  = Math.min((now - lastTick) / 1000, 60); // スリープ復帰で巨大dtを防ぐ
   lastTick  = now;
 
