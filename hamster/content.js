@@ -148,15 +148,30 @@
     return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
   }
 
+  // ─── 日付変更チェック ──────────────────────────────────
+  let currentDate=new Date().toISOString().slice(0,10);
+  function checkDateChange(){
+    const today=new Date().toISOString().slice(0,10);
+    if(today!==currentDate){
+      currentDate=today;
+      try{
+        chrome.storage.local.set({yesterdayVisible:sessionVisible, sessionVisible:0, fatigue:0, workDate:today});
+        if(sessionVisible>0) yesterday.textContent=`昨日 ${fmt(Math.round(sessionVisible))}`;
+      }catch(e){}
+      sessionVisible=0; fatigue=0; isActive=true;
+    }
+  }
+
   // ─── TICK ─────────────────────────────────────────────
   function tick(){
-    const now=Date.now(), dt=(now-lastTick)/1000;
+    const now=Date.now();
+    const dt=Math.min((now-lastTick)/1000, 60);
     lastTick=now;
-    const sessionAge=(now-sessionStart)/1000;
+    checkDateChange();
     if(isActive){ fatigue=Math.min(MAX_SEC,fatigue+dt); sessionVisible+=dt; }
     else          fatigue=Math.max(0,fatigue-dt);
-    render(sessionAge<ST[0].lim ? 0 : getStage(fatigue));
-    tdisp.textContent=fmt(sessionVisible);
+    render(getStage(fatigue));
+    tdisp.textContent=fmt(Math.round(sessionVisible));
     recovery.textContent=fatigue<=0
       ? '完全回復済み ✓'
       : `完全回復まで ${fmt(Math.ceil(fatigue))}`;
